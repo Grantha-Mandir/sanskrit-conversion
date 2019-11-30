@@ -1,0 +1,449 @@
+﻿'
+' select root folder for all the files
+'
+' the code will loop through all the sub folders and files
+'
+Sub UpdateAllToUnicode()
+    Dim FileSystem As Object
+    Dim HostFolder As String
+    
+    Dim rootFolder As String
+    rootFolder = GetFolder
+    
+    Set FileSystem = CreateObject("Scripting.FileSystemObject")
+    processFolder FileSystem.GetFolder(rootFolder)
+    
+    Debug.Print "All done"
+     
+End Sub
+Sub processFolder(folder)
+    
+    Debug.Print "process fodler:" & folder.Path
+
+    Dim SubFolder
+    For Each SubFolder In folder.SubFolders
+        processFolder SubFolder
+        DoEvents
+    Next
+    
+    ' Operate on each file
+    UpdateOneFolderToUnicode folder.Path
+End Sub
+'
+' this macro deal with one folder at a time
+'
+' and it takes care of all the files with extension *.doc
+' please update line:
+'   strFile = Dir(strFolder & "\*.doc", vbNormal)
+' to
+'   strFile = Dir(strFolder & "\*.docx", vbNormal)
+' if the docs are in docx format
+'
+Sub UpdateOneFolderToUnicode(folder)
+    
+    Dim strFolder As String, strFile As String
+    strFolder = folder
+    If strFolder = "" Then Exit Sub
+    
+    'strFile = Dir(strFolder & "\*.docx", vbNormal) ' for docx files
+    strFile = Dir(strFolder & "\*.doc", vbNormal)
+    While strFile <> ""
+      di_balaram_unicode strFolder & "\" & strFile
+      strFile = Dir()
+    Wend
+    
+
+End Sub
+Function GetFolder() As String
+    Dim oFolder As Object
+    GetFolder = ""
+    Set oFolder = CreateObject("Shell.Application").BrowseForFolder(0, "Choose a folder", 0)
+    If (Not oFolder Is Nothing) Then GetFolder = oFolder.Items.Item.Path
+    Set oFolder = Nothing
+End Function
+
+Sub di_balaram_unicode(filePath)
+    '
+    ' Macro: di_balaram_unicode
+    ' Automatically produced by diCrunch v2.00:b5
+    ' Creation date: Tue, 05 Jun 2007 13:31:45 +0000
+    ' Online at http://www.bhasa.net/diCrunch.php
+    '
+    Dim wdDoc As Document
+    Dim myRange
+    Application.ScreenUpdating = False
+On Error GoTo UpdateErr
+
+    Set wdDoc = Documents.Open(FileName:=filePath, AddToRecentFiles:=False, Visible:=False)
+    Set myRange = wdDoc.Content
+    
+    With myRange.Find
+      .Text = "Ä"
+      .Replacement.Text = ChrW(256)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "É"
+      .Replacement.Text = ChrW(298)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ü"
+      .Replacement.Text = ChrW(362)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Å"
+      .Replacement.Text = ChrW(7770)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "È"
+      .Replacement.Text = ChrW(7772)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ì"
+      .Replacement.Text = ChrW(7748)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ï"
+      .Replacement.Text = "Ñ"
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ö"
+      .Replacement.Text = ChrW(7788)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ò"
+      .Replacement.Text = ChrW(7692)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ë"
+      .Replacement.Text = ChrW(7750)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ç"
+      .Replacement.Text = ChrW(346)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ñ"
+      .Replacement.Text = ChrW(7778)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "À"
+      .Replacement.Text = ChrW(7744)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ù"
+      .Replacement.Text = ChrW(7716)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ß"
+      .Replacement.Text = ChrW(7734)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ß"
+      .Replacement.Text = ChrW(7736)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = ".Ò"
+      .Replacement.Text = ChrW(7694)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "Ý"
+      .Replacement.Text = ChrW(7822)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ä"
+      .Replacement.Text = ChrW(257)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "é"
+      .Replacement.Text = ChrW(299)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ü"
+      .Replacement.Text = ChrW(363)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "å"
+      .Replacement.Text = ChrW(7771)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "è"
+      .Replacement.Text = ChrW(7773)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ì"
+      .Replacement.Text = ChrW(7749)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ï"
+      .Replacement.Text = "--j--"
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ö"
+      .Replacement.Text = ChrW(7789)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ò"
+      .Replacement.Text = ChrW(7693)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ë"
+      .Replacement.Text = ChrW(7751)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ç"
+      .Replacement.Text = ChrW(347)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ñ"
+      .Replacement.Text = ChrW(7779)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "à"
+      .Replacement.Text = ChrW(7745)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ù"
+      .Replacement.Text = ChrW(7717)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ÿ"
+      .Replacement.Text = ChrW(7735)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "û"
+      .Replacement.Text = ChrW(7737)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = ".ò"
+      .Replacement.Text = ChrW(7695)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "ý"
+      .Replacement.Text = ChrW(7823)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "~"
+      .Replacement.Text = ChrW(625)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "_"
+      .Replacement.Text = ChrW(814)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "'"
+      .Replacement.Text = "'"
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "~"
+      .Replacement.Text = ChrW(625)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "/x"
+      .Replacement.Text = "/x"
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = ChrW(8230)
+      .Replacement.Text = ChrW(8230)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = ChrW(8217)
+      .Replacement.Text = ChrW(8217)
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+    
+    With myRange.Find
+      .Text = "--j--"
+      .Replacement.Text = "ñ"
+      .Wrap = wdFindContinue
+      .MatchCase = True
+    End With
+    myRange.Find.Execute Replace:=wdReplaceAll
+
+    '--------------------------------------------------------------------
+    ' change to desired font name here
+    '--------------------------------------------------------------------
+    myRange.Font.Name = "Arial"
+
+    wdDoc.Close SaveChanges:=wdSaveChanges
+    Set wdDoc = Nothing
+    
+    Application.ScreenUpdating = True
+    
+    Exit Sub
+UpdateErr:
+    Debug.Print "Update file: " & filePath & " Error: " & Err.Description
+    Set wdDoc = Nothing
+End Sub
+
+
+
