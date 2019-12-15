@@ -2,7 +2,9 @@ from app import app
 from flask import request, redirect, flash,url_for, render_template, send_from_directory
 from  app.config import Config
 from werkzeug.utils import secure_filename
+from references.balaram_to_unicode import process_docx, clean_directory
 import os
+import shutil
 #@app.route('/')
 @app.route('/index')
 def index():
@@ -25,34 +27,32 @@ def upload():
             flash('No file selected')
             return redirect(request.url)
         if file and allowed_file(file.filename):
+            # First clear Download folder
+            clean_directory(app.config['DOWNLOAD_FOLDER'])
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded. Processing')
-            process_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), filename)
-            return redirect(url_for('uploaded_file', filename=filename))
+            new_file_name = process_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), filename)
+            # Clean up Upload folder
+            clean_directory(app.config['UPLOAD_FOLDER'])
+            return redirect(url_for('uploaded_file', filename=new_file_name))
+
         else:
-            flash('Allowed file types are .doc, .docx')
+            flash('Allowed file types are .docx')
             return redirect(request.url)
 
     return render_template('index.html')
 
 
-def change_filename(filename):
-    parts = filename.split('.')[:-1]
-    parts.append('processed')
-    f_name = '_'.join(parts) + '.docx'
-    return f_name
 
 def process_file(path,filename):
     conf = Config()
-    with open(path,'rb') as f:
-        doc = f.read()
-    new_file = change_filename(filename)
-    with open(os.path.join(conf.DOWNLOAD_FOLDER,new_file),'wb') as f:
-        f.write(doc)
+    new_file_name = process_docx(path, filename, conf.DOWNLOAD_FOLDER)
+    return new_file_name
+
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    new_file = change_filename(filename)
-    return send_from_directory(app.config['DOWNLOAD_FOLDER'], new_file, as_attachment=True)
+    return send_from_directory(app.config['DOWNLOAD_FOLDER'],filename, as_attachment=True)
 

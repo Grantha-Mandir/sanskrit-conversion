@@ -61,17 +61,26 @@ def xml_to_unicode(tree):
     return tree
 
 
-def main(docx_path):
+def process_docx(file_path, file_name, download_folder):
     temp_unzipped = 'temp_unzipped'
-    try:
+    os.getcwd()
+    if os.path.exists(temp_unzipped):
+        clean_directory(os.path.realpath(temp_unzipped))
+    else:
         os.mkdir(temp_unzipped)
-    except FileExistsError:
-        pass
     os.chdir(temp_unzipped)
-    os.system('unzip ' + os.path.join('..', docx_path))
+    os.system('unzip ' + os.path.join('..', file_path))
+    docx_mapping()
+    #pdb.set_trace()
+    parts = file_name.split('.')
+    file_name = '.'.join(parts[:-1])
+    output_path = os.path.join(download_folder, file_name + '_processed.docx')
+    os.system('zip -r ' + output_path + ' *')
+    return file_name + '_processed.docx'
 
+def docx_mapping():
     xml_path = 'word'
-    document_parts = ['footnotes']#, 'footnotes', 'document']
+    document_parts = ['footnotes', 'document']
 
     filenames = []
     for d_part in document_parts:
@@ -91,9 +100,35 @@ def main(docx_path):
         shutil.copy2(outpath, inpath)
         os.remove(outpath)
 
-    import pdb; pdb.set_trace()
+
+
+def clean_directory(folder):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+def rezip(docx_path):
+    #pdb.set_trace()
     output_docx = os.path.join('..', docx_path + '_rezipped.docx')
     os.system('zip -r ' + output_docx + ' *')
+
+
+def main(docx_path):
+    temp_unzipped = 'temp_unzipped'
+    try:
+        os.mkdir(temp_unzipped)
+    except FileExistsError:
+        pass
+    os.chdir(temp_unzipped)
+    os.system('unzip ' + os.path.join('..', docx_path))
+    docx_mapping()
+    rezip(docx_path)
 
 
 if __name__ == '__main__':
