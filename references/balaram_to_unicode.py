@@ -61,7 +61,7 @@ def xml_to_unicode(tree):
     return tree
 
 
-def process_docx(file_path, file_name, download_folder):
+def process_docx(file_path, user_name, file_name, download_folder):
     temp_unzipped = 'temp_unzipped'
     os.getcwd()
     if os.path.exists(temp_unzipped):
@@ -74,7 +74,7 @@ def process_docx(file_path, file_name, download_folder):
     #pdb.set_trace()
     parts = file_name.split('.')
     file_name = '.'.join(parts[:-1])
-    output_path = os.path.join(download_folder, file_name + '_processed.docx')
+    output_path = os.path.join(download_folder, user_name, file_name + '_processed.docx')
     os.system('zip -r ' + output_path + ' *')
     return file_name + '_processed.docx'
 
@@ -103,6 +103,8 @@ def docx_mapping():
 
 
 def clean_directory(folder):
+    if not os.path.exists(folder):
+        return
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
