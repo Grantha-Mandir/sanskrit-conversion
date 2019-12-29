@@ -4,41 +4,19 @@ import shutil
 import xml.etree.ElementTree as ET
 
 
-def replace_text(text):
+
+def get_balaram_mapping():
     # todo: Add candrabindu!
-    text = text.replace("", "fi")
-    text = text.replace("", "fl")
-    text = text.replace("ä", "ā")
-    text = text.replace("é", "ī")
-    text = text.replace("ü", "ū")
-    text = text.replace("å", "ṛ")
-    text = text.replace("è", "ṝ")
-    text = text.replace("ì", "ṅ")
-    text = text.replace("ñ", "ṣ")
-    text = text.replace("ï", "ñ")
-    text = text.replace("ö", "ṭ")
-    text = text.replace("ò", "ḍ")
-    text = text.replace("ë", "ṇ")
-    text = text.replace("ç", "ś")
-    text = text.replace("à", "ṁ")
-    text = text.replace("ù", "ḥ")
-    text = text.replace("ÿ", "ḷ")
-    text = text.replace("û", "ḹ")
-    text = text.replace("Ä", "Ā")
-    text = text.replace("É", "Ī")
-    text = text.replace("Ü", "Ū")
-    text = text.replace("Å", "Ṛ")
-    text = text.replace("È", "Ṝ")
-    text = text.replace("Ì", "Ṅ")
-    text = text.replace("Ñ", "Ṣ")
-    text = text.replace("Ï", "Ñ")
-    text = text.replace("Ö", "Ṭ")
-    text = text.replace("Ò", "Ḍ")
-    text = text.replace("Ë", "Ṇ")
-    text = text.replace("Ç", "Ś")
-    text = text.replace("À", "Ṁ")
-    text = text.replace("Ù", "Ḥ")
-    text = text.replace("ß", "Ḷ")
+    balaram_map = {"": "fi", "": "fl", "ä": "ā","é": "ī","ü": "ū","å": "ṛ","è":"ṝ",
+                   "ì":"ṅ","ñ": "ṣ" ,"ï": "ñ", "ö": "ṭ","ò": "ḍ","ë": "ṇ","ç": "ś",
+                   "à": "ṁ","ù": "ḥ", "ÿ":"ḷ","û": "ḹ","Ä": "Ā","É": "Ī","Ü": "Ū",
+                   "Å": "Ṛ","È": "Ṝ", "Ì": "Ṅ","Ñ": "Ṣ","Ï":"Ñ","Ö": "Ṭ","Ò":
+                       "Ḍ","Ë": "Ṇ","Ç":"Ś","À":"Ṁ","Ù":"Ḥ","ß":"Ḷ" }
+    return balaram_map
+
+def replace_text(text, mapping):
+    for ch in mapping:
+        text = text.replace(ch,mapping[ch])
     return text
 
 
