@@ -14,13 +14,41 @@ def get_balaram_mapping():
                        "Ḍ","Ë": "Ṇ","Ç":"Ś","À":"Ṁ","Ù":"Ḥ","ß":"Ḷ" }
     return balaram_map
 
-def replace_text(text, mapping):
-    for ch in mapping:
-        text = text.replace(ch,mapping[ch])
-    return text
+def read_ruchi_mapping():
+    mappings = [dict(), dict(), dict()]
+    with open(os.path.abspath('../ruchi_mapping.tsv')) as f:
+        for count,line in enumerate(f):
+            parts = line.strip().split('\t')
+            if len(parts)<5 or count==0:
+                continue
+            cols = parts[1:4]
+            for count,c in enumerate(cols):
+                mappings[count][c] = parts[4]
+    return mappings
 
 
-def xml_to_unicode(tree):
+#ToDo: Memoize this
+def get_kruti_mapping():
+    mappings = read_ruchi_mapping()
+    return mappings[1]
+
+#ToDo: Memoize this
+def get_wc901_mapping():
+    mappings = read_ruchi_mapping()
+    return mappings[2]
+
+#ToDo: Memoize this
+def get_rmd_mapping():
+    mappings = read_ruchi_mapping()
+    return mappings[0]
+
+
+def xml_to_unicode(tree, map_name):
+    def replace_text(text, mapping):
+        for ch in mapping:
+            text = text.replace(ch, mapping[ch])
+        return text
+
     namespace = {'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
     root = tree.getroot()
     #t.getroot().findall('.//w:t', namespace)
@@ -28,10 +56,22 @@ def xml_to_unicode(tree):
     # In ElementTree nodes do not have a reference to their parent,
     # thus we have nodes disconnected from the tree when searching with .//w:t
     # => use a different XML library!!!
+
+    if map_name=='balaram':
+        mapping = get_balaram_mapping()
+    elif map_name=='krutidev':
+        mapping = get_kruti_mapping()
+    elif map_name=='wc901':
+        mapping = get_wc901_mapping()
+    elif map_name=='rm_devanagiri':
+        mapping = get_rmd_mapping()
+    else:
+        raise NotImplementedError(f'{map_name} not implmented.')
+
     for elem in root.getiterator():
         try:
             elem.find('.//w:t', namespace)
-            t = replace_text(elem.text)
+            t = replace_text(elem.text, mapping)
             elem.text = t
 
         except AttributeError:
@@ -39,7 +79,7 @@ def xml_to_unicode(tree):
     return tree
 
 
-def process_docx(file_path, user_name, file_name, download_folder):
+def process_docx(file_path, user_name, file_name, download_folder, map_name='balaram'):
     temp_unzipped = 'temp_unzipped'
     os.getcwd()
     if os.path.exists(temp_unzipped):
@@ -48,15 +88,16 @@ def process_docx(file_path, user_name, file_name, download_folder):
         os.mkdir(temp_unzipped)
     os.chdir(temp_unzipped)
     os.system('unzip ' + os.path.join('..', file_path))
-    docx_mapping()
+    docx_mapping(map_name)
     #pdb.set_trace()
     parts = file_name.split('.')
     file_name = '.'.join(parts[:-1])
     output_path = os.path.join(download_folder, user_name, file_name + '_processed.docx')
     os.system('zip -r ' + output_path + ' *')
+    os.chdir(os.path.abspath('../'))
     return file_name + '_processed.docx'
 
-def docx_mapping():
+def docx_mapping(map_name):
     xml_path = 'word'
     document_parts = ['footnotes', 'document']
 
@@ -68,10 +109,11 @@ def docx_mapping():
         (folder, fname) = os.path.split(inpath)
         outfile = '_' + fname
         outpath = os.path.join(folder, outfile)
-
+        if not os.path.exists(inpath):
+            continue
         with open(inpath, encoding='utf8') as f:
             tree = ET.parse(f)
-            tree = xml_to_unicode(tree)
+            tree = xml_to_unicode(tree, map_name)
             tree.write(outpath, xml_declaration=True,
                        method='xml', encoding="utf8")
 
@@ -107,7 +149,7 @@ def main(docx_path):
         pass
     os.chdir(temp_unzipped)
     os.system('unzip ' + os.path.join('..', docx_path))
-    docx_mapping()
+    docx_mapping(map_name='balaram')
     rezip(docx_path)
 
 

@@ -7,9 +7,9 @@
         <div align="center">
             <h1>Jiva Grantha Mandir Sanskrit Conversion Tool</h1>
         <p>
-        Converts legacy Balaram Sanskrit Font to Unicode
+        Converts legacy Sanskrit Fonts to Unicode
         </p>
-             <h2>Upload a MS-Word .doc or .docx  File</h2>
+             <h2>Upload a MS-Word .docx  File</h2>
             <p>
 	{% with messages = get_flashed_messages() %}
 	  {% if messages %}
@@ -21,8 +21,16 @@
 	  {% endif %}
 	{% endwith %}
 </p>
+
+
     <form method=post action="/upload" enctype=multipart/form-data>
-       <dl>
+        <h2>Select Source Font</h2> <select name=Select Font Type method="GET" action="/">
+    <option value= "balaram">Balaram </option>"
+    <option value="krutidev">Krutidev</option>
+    <option value="rm_devanagiri">RM Devanagiri</option>
+    <option value="wc901">Walkman Chanakya 901</option>
+</select>
+        <dl>
 		<p>
 			<input type="file" name="file" autocomplete="off" required>
 		</p>
@@ -31,6 +39,8 @@
 		<input type="submit" value="Submit">
 	</p>
     </form>
+
+
         </div>
         </body>
 
