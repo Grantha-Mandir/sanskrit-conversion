@@ -21,6 +21,8 @@ def read_ruchi_mapping():
             parts = line.strip().split('\t')
             if len(parts)<5 or count==0:
                 continue
+            if parts[4]=='':
+                continue
             cols = parts[1:4]
             for count,c in enumerate(cols):
                 mappings[count][c] = parts[4]
@@ -45,8 +47,10 @@ def get_rmd_mapping():
 
 def xml_to_unicode(tree, map_name):
     def replace_text(text, mapping):
+        ignore = {''}
         for ch in mapping:
-            text = text.replace(ch, mapping[ch])
+            if ch not in ignore:
+                text = text.replace(ch, mapping[ch])
         return text
 
     namespace = {'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
