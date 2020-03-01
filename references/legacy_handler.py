@@ -62,6 +62,61 @@ class Krutidev(Legacy):
     def special_cases(self, text):
         #apply case 1 (Code for Glyph1 : ± (reph+anusvAr))
         text = text.replace("±","Zं")
+        # apply case 2
+        text = self.case2(text)
+        # apply case 3
+        return text
+
+    def case3(self, text):
+        '''
+        Glyph3 & Glyph4: Ç  É
+        code for replacing "fa" with "िं"  and correcting its position too.(moving it two positions forward)
+        :param text:
+        :return:
+        '''
+        text = text.replace( "Ç" , "fa" ) #at some places  Ç  is  used eg  in "किंकर".
+        text = text.replace("É" , "र्fa") # // at some places  É  is  used eg  in "शर्मिंदा"
+
+        fa_index = text.find('fa')
+        while fa_index != -1:
+            next_char = text[fa_index + 2]
+            replace_char = "fa" + next_char
+            text = text.replace(replace_char, next_char + "िं")
+            fa_index = text.find('fa',fa_index+2)
+        return text
+
+
+    def case4(self, text):
+        '''
+        Glyph5: Ê, code for replacing "h" with "ी"  and correcting its position too.(moving it one positions forward)
+        :param text:
+        :return:
+        '''
+        text.replace("Ê", "ीZ") #t some places  Ê  is  used eg  in "किंकर".
+        #following loop to eliminate 'chhotee ee kee maatraa' on half-letters as a result of above transformation.
+        ee_index = text.find("ि्")
+        while ee_index != -1:
+            next_consonant = text[ee_index+2]
+            replace_char = "ि्" + next_consonant
+            text = text.replace(replace_char,"्" + next_consonant+"ि")
+            ee_index = text.find('"ि्"', ee_index + 2)
+        return text
+
+    def case2(self, text):
+        '''
+        Glyp2: Æ
+        code for replacing "f" with "ि" and correcting its position too.(moving it one position forward)
+        :param text:
+        :return:
+        '''
+        text = text.replace("Æ","र्f")
+        f_index = text.find("f")
+        while f_index!=-1:
+            next_char = text[f_index+1]
+            replace_char = "f" + next_char
+            text = text.replace(replace_char, next_char+"f")
+            f_index = text.find('f', f_index + 1 )
+            #search for f ahead of the current position.
         return text
 
 class Balaram(Krutidev):
