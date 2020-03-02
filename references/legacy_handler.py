@@ -50,7 +50,7 @@ class Krutidev(Legacy):
         root = tree.getroot()
         for elem in root.getiterator():
             try:
-                if elem.text is not None:
+                if elem.text is not None and len(elem.text.strip())>0:
                     elem.find('.//w:t', namespace)
                     t = self.replace_text(elem.text)
                     t = self.special_cases(t)
@@ -62,9 +62,49 @@ class Krutidev(Legacy):
     def special_cases(self, text):
         #apply case 1 (Code for Glyph1 : ± (reph+anusvAr))
         text = text.replace("±","Zं")
-        # apply case 2
         text = self.case2(text)
-        # apply case 3
+        text = self.case3(text)
+        text = self.case4(text)
+        text = self.case5(text)
+        return text
+
+    def case5(self, text):
+        '''
+         Eliminating reph "Z" and putting 'half - r' at proper position for this.
+        :param text:
+        :return:
+        '''
+        matra_set = set_of_matras = {"अ", "आ", "इ", "ई", "उ", "ऊ", "ए", "ऐ", "ओ", "औ", "ा", "ि", "ी ","ु", "ू", "ृ", "े", "ै", "ो", "ौ","ं" ":"," ँ"," ॅ"}
+        r_index = text.find("Z")
+        while r_index>0:
+            prob_pos_hlf_r = r_index-1
+            prob_hlf_r = text[prob_pos_hlf_r]
+            # trying to find non-maatra position left to current O (ie, half -r).
+            while prob_hlf_r in matra_set:
+                prob_pos_hlf_r = prob_hlf_r -1
+                prob_hlf_r = text[prob_pos_hlf_r]
+            replace_char = text[prob_pos_hlf_r:(r_index-prob_pos_hlf_r)]
+            new_string  = "र्" + replace_char
+            replace_char = replace_char + 'Z'
+            text = text.replace(replace_char,new_string)
+            r_index = text.find("Z")
+        return text
+
+
+    def case4(self, text):
+        '''
+        Glyph5: Ê, code for replacing "h" with "ी"  and correcting its position too.(moving it one positions forward)
+        :param text:
+        :return:
+        '''
+        text.replace("Ê", "ीZ") #t some places  Ê  is  used eg  in "किंकर".
+        #following loop to eliminate 'chhotee ee kee maatraa' on half-letters as a result of above transformation.
+        ee_index = text.find("ि्")
+        while ee_index != -1:
+            next_consonant = text[ee_index+2]
+            replace_char = "ि्" + next_consonant
+            text = text.replace(replace_char,"्" + next_consonant+"ि")
+            ee_index = text.find('"ि्"', ee_index + 2)
         return text
 
     def case3(self, text):
@@ -83,23 +123,6 @@ class Krutidev(Legacy):
             replace_char = "fa" + next_char
             text = text.replace(replace_char, next_char + "िं")
             fa_index = text.find('fa',fa_index+2)
-        return text
-
-
-    def case4(self, text):
-        '''
-        Glyph5: Ê, code for replacing "h" with "ी"  and correcting its position too.(moving it one positions forward)
-        :param text:
-        :return:
-        '''
-        text.replace("Ê", "ीZ") #t some places  Ê  is  used eg  in "किंकर".
-        #following loop to eliminate 'chhotee ee kee maatraa' on half-letters as a result of above transformation.
-        ee_index = text.find("ि्")
-        while ee_index != -1:
-            next_consonant = text[ee_index+2]
-            replace_char = "ि्" + next_consonant
-            text = text.replace(replace_char,"्" + next_consonant+"ि")
-            ee_index = text.find('"ि्"', ee_index + 2)
         return text
 
     def case2(self, text):
