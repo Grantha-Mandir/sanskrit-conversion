@@ -74,16 +74,17 @@ class Krutidev(Legacy):
         :param text:
         :return:
         '''
-        matra_set = set_of_matras = {"अ", "आ", "इ", "ई", "उ", "ऊ", "ए", "ऐ", "ओ", "औ", "ा", "ि", "ी ","ु", "ू", "ृ", "े", "ै", "ो", "ौ","ं" ":"," ँ"," ॅ"}
+        matra_set =  {"अ", "आ", "इ", "ई", "उ", "ऊ", "ए", "ऐ", "ओ", "औ", "ा", "ि", "ी ","ु", "ू", "ृ", "े", "ै", "ो", "ौ","ं" ":"," ँ"," ॅ"}
         r_index = text.find("Z")
-        while r_index>0:
-            prob_pos_hlf_r = r_index-1
-            prob_hlf_r = text[prob_pos_hlf_r]
+        tx_list = list(text)
+        while r_index>0 and r_index<len(text)-1:
+            hlf_r_pos = r_index-1
+            hlf_r = text[hlf_r_pos]
             # trying to find non-maatra position left to current O (ie, half -r).
-            while prob_hlf_r in matra_set:
-                prob_pos_hlf_r = prob_hlf_r -1
-                prob_hlf_r = text[prob_pos_hlf_r]
-            replace_char = text[prob_pos_hlf_r:(r_index-prob_pos_hlf_r)]
+            while hlf_r in matra_set:
+                hlf_r_pos = hlf_r_pos -1
+                hlf_r = text[hlf_r_pos]
+            replace_char = text[hlf_r_pos:r_index]
             new_string  = "र्" + replace_char
             replace_char = replace_char + 'Z'
             text = text.replace(replace_char,new_string)
@@ -100,7 +101,7 @@ class Krutidev(Legacy):
         text.replace("Ê", "ीZ") #t some places  Ê  is  used eg  in "किंकर".
         #following loop to eliminate 'chhotee ee kee maatraa' on half-letters as a result of above transformation.
         ee_index = text.find("ि्")
-        while ee_index != -1:
+        while ee_index != -1 and ee_index<len(text)-2:
             next_consonant = text[ee_index+2]
             replace_char = "ि्" + next_consonant
             text = text.replace(replace_char,"्" + next_consonant+"ि")
@@ -118,7 +119,7 @@ class Krutidev(Legacy):
         text = text.replace("É" , "र्fa") # // at some places  É  is  used eg  in "शर्मिंदा"
 
         fa_index = text.find('fa')
-        while fa_index != -1:
+        while fa_index != -1 and fa_index<len(text)-1:
             next_char = text[fa_index + 2]
             replace_char = "fa" + next_char
             text = text.replace(replace_char, next_char + "िं")
@@ -134,10 +135,10 @@ class Krutidev(Legacy):
         '''
         text = text.replace("Æ","र्f")
         f_index = text.find("f")
-        while f_index!=-1:
+        while f_index!=-1 and f_index<len(text)-1:
             next_char = text[f_index+1]
             replace_char = "f" + next_char
-            text = text.replace(replace_char, next_char+"f")
+            text = text.replace(replace_char, next_char+"ि")
             f_index = text.find('f', f_index + 1 )
             #search for f ahead of the current position.
         return text
