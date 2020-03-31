@@ -93,4 +93,8 @@ def second():
 
 def full_path(path):
     full_path = os.path.abspath(path)
+    while not os.path.exists(full_path):
+        cwd = os.getcwd()
+        base = os.path.split(cwd)[0]
+        full_path = os.path.join(base,path)
     return full_path
