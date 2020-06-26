@@ -2,7 +2,7 @@ from app import app
 from flask import request, redirect, flash,url_for, render_template, send_from_directory
 from  app.config import Config
 from werkzeug.utils import secure_filename
-from references.balaram_to_unicode import process_docx, clean_directory
+from references.legacy_to_unicode import process_docx, clean_directory
 import os, flask
 
 '''

@@ -2,8 +2,7 @@
 import os.path
 import shutil
 import xml.etree.ElementTree as ET
-from references.legacy_handler import Krutidev, Balaram
-
+from references.legacy_handler import Krutidev, Balaram, WalkmanChanakya
 
 
 def process_docx(file_path, user_name, file_name, download_folder, map_name='balaram'):
@@ -28,8 +27,10 @@ def docx_mapping(map_name):
 
     if map_name== 'balaram':
         mapper = Balaram()
+    elif map_name=='krutidev':
+        mapper = Krutidev()
     elif map_name=='wc901':
-        mapper = Krutidev('../kruti_unicode_map.tsv')
+        mapper = WalkmanChanakya()
     else:
         raise NotImplementedError(f"{map_name} not implemented")
 
