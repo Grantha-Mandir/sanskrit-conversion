@@ -13,9 +13,11 @@ def process_docx(file_path, user_name, file_name, download_folder, map_name='bal
     else:
         os.mkdir(temp_unzipped)
     os.chdir(temp_unzipped)
-    os.system('unzip ' + os.path.join('..', file_path))
+    file_path = os.path.join('..', file_path)
+    if " " in file_path:
+        file_path = '"' + file_path + '"'
+    os.system('unzip ' + file_path)
     docx_mapping(map_name)
-    #pdb.set_trace()
     parts = file_name.split('.')
     file_name = '.'.join(parts[:-1])
     output_path = os.path.join(download_folder, user_name, file_name + '_processed.docx')
