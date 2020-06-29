@@ -37,7 +37,8 @@ def docx_mapping(map_name):
         raise NotImplementedError(f"{map_name} not implemented")
 
     xml_path = 'word'
-    document_parts = ['footnotes', 'document']
+    document_parts = ['footnotes', 'document', 'endnotes', 'comments',
+                      'footer1', 'footer2', 'header1', 'header2']
 
     filenames = []
     for d_part in document_parts:
